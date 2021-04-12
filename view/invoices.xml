@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    
+    <record id="commission_type_inv" model="ir.ui.view">
+        <field name="name">account.invoice</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='date_invoice']" position="after">
+                <field name="commission" invisible="1"/>
+                <field name="settled" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_settlement_form">
+        <field name="name">Settlements</field>
+        <field name="model">sale.commission.settlement</field>
+        <field name="arch" type="xml">
+            <form string="Settlement" create="false">
+                <header>
+                    <button string="Validate"
+                            attrs="{'invisible': [('state', '!=', 'draft')]}"
+                            class="oe_highlight"
+                            type="object"
+                            name="action_validated" />
+                    <button string="Cancel"
+                            states="draft"
+                            type="object"
+                            name="action_cancel" />
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <group>
+                    <field name="agent"/>
+                </group>
+                <group>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="total_settled"/>
+                    </group>
+                    <group>
+                        <field name="date_to"/>
+                        <field name="total" widget="monetary" string="Total Commission"/>
+                    </group>
+                </group>
+                <group string="Commission lines" colspan="4">
+                    <field name="lines" nolabel="1">
+                        <tree string="Settlement lines">
+                            <field name="date"/>
+                            <field name="invoice"/>
+                            <field name="total_invoice"/>
+                        </tree>
+                    </field>
+                </group>
+            </form>
+        </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="commission_invoice_tree">
+        <field name="name">Commissions invoice tree</field>
+        <field name="model">sale.commission.settlement</field>
+        <field name="arch" type="xml">
+            <tree string="Commissions Invoices" create="false"
+                  colors="red: state == 'cancel'; gray: state == 'invoiced'">
+                <field name="agent" />
+                <field name="date_from" />
+                <field name="date_to" />
+                <field name="total" />
+                <field name="state" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_commision_inv_list" model="ir.actions.act_window">
+        <field name="name">Commision Invoices</field>
+        <field name="res_model">sale.commission.settlement</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="commision_inv_menu"
+        action="action_commision_inv_list"
+        name="Commision Invoice"
+        sequence="30"
+        parent="main_manu_commision"/>
+
+</odoo>

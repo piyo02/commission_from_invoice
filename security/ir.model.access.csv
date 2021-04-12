@@ -1,0 +1,6 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+"sale_commission","action_sale_commission","model_sale_commission","account.group_account_user",1,1,1,1
+"sale_commission_invoice","action_sale_commission_invoice","model_sale_commission_invoice","account.group_account_user",1,1,1,1
+"sale_commission_section","action_sale_commission_section","model_sale_commission_section","account.group_account_user",1,1,1,1
+"sale_commission_settlement","action_sale_commission_settlement","model_sale_commission_settlement","account.group_account_user",1,1,1,1
+"sale_commission_settlement_line","action_sale_commission_settlement_line","model_sale_commission_settlement_line","account.group_account_user",1,1,1,1

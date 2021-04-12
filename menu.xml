@@ -1,0 +1,10 @@
+<odoo>
+	<data>
+
+		<menuitem id="main_manu_commision"
+			 parent="sales_team.menu_base_partner"
+			 name="Commision Management"
+			 sequence="10"/>
+		
+	</data>
+</odoo>

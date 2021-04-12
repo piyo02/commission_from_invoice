@@ -1,0 +1,51 @@
+<odoo>
+	<data>
+
+        <record id="profit_coll_report_form_view" model="ir.ui.view">
+            <field name="name">sale.commission.invoice.form.view</field>
+            <field name="model">sale.commission.invoice</field>
+            <field name="arch" type="xml">
+                <form string="Create Commision">
+                    <group>
+                        <field name="agent_id" widget="many2many_tags"/>
+                    </group>
+                    <h2>Tanggal Pembayaran</h2>
+                    <group>
+                        <group>
+                            <field name="start_date"/>
+                        </group>
+                        <group>
+                            <field name="end_date"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="day_term"/>
+                    </group>
+                    <footer>
+                        <button name="create_commission" string="Create Commission" class="oe_highlight"
+                                type="object"/>
+                        Or
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+
+
+            </field>
+        </record>
+
+		<record id="action_create_commision_inv" model="ir.actions.act_window">
+			<field name="name">Create Commision</field>
+			<field name="res_model">sale.commission.invoice</field>
+			<field name="view_mode">form</field>
+			<field name="view_type">form</field>
+			<field name="target">new</field>
+		</record>
+
+        <menuitem id="create_commision_inv"
+			 action="action_create_commision_inv"
+			 name="Create Commision"
+			 sequence="40"
+			 parent="main_manu_commision"/>
+
+	</data>
+</odoo>
