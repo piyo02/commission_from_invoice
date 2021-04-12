@@ -35,8 +35,8 @@
                                     <td><span t-field="l.date"/></td>
                                     <td><span t-field="l.invoice"/></td>
                                     <td class="text-right">
-                                        <span t-field="l.total_payment" />
-                                        <t t-set="total_invoice" t-value="total_invoice + l.total_payment" />
+                                        <span t-field="l.total_invoice" />
+                                        <t t-set="total_invoice" t-value="total_invoice + l.total_invoice" />
                                     </td>
                                 </tr>
                             </tbody>

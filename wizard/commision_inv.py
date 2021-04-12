@@ -1,6 +1,6 @@
 from odoo import api, exceptions, fields, models, _
 import logging
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 _logger = logging.getLogger(__name__)
 class CommissionInvoices(models.Model):
@@ -27,31 +27,49 @@ class CommissionInvoices(models.Model):
         settlement_line_obj = self.env['sale.commission.settlement.line']
         settlement_ids = []
 
-        date_to = date.today()
+        # date_to = date.today()
+        date_to = datetime.strptime(self.end_date, "%Y-%m-%d").date()
         date_from = date_to - timedelta(days=self.day_term)
-
         if not self.agent_id:
             self.agent_id = self.env['res.partner'].search(
                 [('agent', '=', True)])
-        
         invoice_has_get = []
         for agent in self.agent_id:
-            invoices = self.env['account.invoice'].search([
-                ('date_invoice', '>=', date_from),
-                ('date_invoice', '<=', date_to),
-                ('user_id.name', '=', agent.name),
-                ('settled', '=', False),
-                ('type', '=', 'out_invoice'),
-            ], order="date_invoice")
-
+            payments = self.env['account.payment'].search([
+                ('payment_date', '>=', self.start_date),
+                ('payment_date', '<=', self.end_date),
+                ('payment_type', '=', 'inbound'),
+                ('state', '=', 'posted'),
+            ])
             list_invoice = []
-            for invoice in invoices:
-                if invoice.id in invoice_has_get:
-                    continue
+            for payment in payments:
+                for invoice in payment.invoice_ids:
+                    date_invoice = datetime.strptime(invoice.date_invoice, "%Y-%m-%d").date()
+                    if invoice.settled or date_invoice < date_from or invoice.state != 'paid' or invoice.user_id.name != agent.name or invoice.id in invoice_has_get:
+                        continue
+                    
+                    detail = []
+                    detail.append(invoice)
+                    list_invoice.append(detail)
+                    invoice_has_get.append(invoice.id)
                 
-                detail = []
-                detail.append(invoice)
-                list_invoice.append(detail)
+            giros = self.env['vit.giro'].search([
+                ('due_date', '>=', self.start_date),
+                ('due_date', '<=', self.end_date),
+                ('state', '=', 'close'),
+                ('type', '=', 'receipt'),
+            ])
+            for giro in giros:
+                for giro_line in giro.giro_invoice_ids:
+                    invoice = giro_line.invoice_id
+                    date_invoice = datetime.strptime(invoice.date_invoice, "%Y-%m-%d").date()
+                    if invoice.settled or date_invoice <  date_from or invoice.state != 'paid' or invoice.user_id.name != agent.name or invoice.id in invoice_has_get:
+                        continue
+
+                    detail = []
+                    detail.append(invoice)
+                    list_invoice.append(detail)
+                    invoice_has_get.append(invoice)
 
             if len(list_invoice):
                 settlement = settlement_obj.create({
