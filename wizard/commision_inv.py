@@ -54,8 +54,8 @@ class CommissionInvoices(models.Model):
                     invoice_has_get.append(invoice.id)
                 
             giros = self.env['vit.giro'].search([
-                ('due_date', '>=', self.start_date),
-                ('due_date', '<=', self.end_date),
+                ('clearing_date', '>=', self.start_date),
+                ('clearing_date', '<=', self.end_date),
                 ('state', '=', 'close'),
                 ('type', '=', 'receipt'),
             ])
